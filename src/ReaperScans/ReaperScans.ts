@@ -23,7 +23,7 @@ import { Helper } from './helper'
 
 const REAPERSCANS_DOMAIN = 'https://reaperscans.com'
 export const ReaperScansInfo: SourceInfo = {
-    version: '4.0.0',
+    version: '4.0.1',
     name: 'ReaperScans',
     description: 'Reaperscans source for 0.8',
     author: 'NmN',
@@ -37,14 +37,19 @@ export const ReaperScansInfo: SourceInfo = {
             type: BadgeColor.GREY,
         },
     ],
-    intents: SourceIntents.MANGA_CHAPTERS | SourceIntents.HOMEPAGE_SECTIONS | SourceIntents.CLOUDFLARE_BYPASS_REQUIRED,
+    intents:
+        SourceIntents.MANGA_CHAPTERS |
+        SourceIntents.HOMEPAGE_SECTIONS |
+        SourceIntents.CLOUDFLARE_BYPASS_REQUIRED,
 }
 
-const userAgent =
-    'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1'
-
-
-export class ReaperScans implements SearchResultsProviding, MangaProviding, ChapterProviding, HomePageSectionsProviding {
+export class ReaperScans
+    implements
+        SearchResultsProviding,
+        MangaProviding,
+        ChapterProviding,
+        HomePageSectionsProviding
+{
     baseUrl = REAPERSCANS_DOMAIN
     stateManager: SourceStateManager = App.createSourceStateManager()
     constructor(private cheerio: CheerioAPI) {}
@@ -60,13 +65,16 @@ export class ReaperScans implements SearchResultsProviding, MangaProviding, Chap
                 request.headers = {
                     ...(request.headers ?? {}),
                     ...{
-                        'user-agent': userAgent,
+                        'user-agent':
+                            await this.requestManager.getDefaultUserAgent(),
                         referer: `${this.baseUrl}`,
                     },
                 }
                 return request
             },
-            interceptResponse: async (response: Response): Promise<Response> => {
+            interceptResponse: async (
+                response: Response
+            ): Promise<Response> => {
                 return response
             },
         },
@@ -103,8 +111,16 @@ export class ReaperScans implements SearchResultsProviding, MangaProviding, Chap
         let page = 2
         let page_data: Chapter[] = []
         do {
-            const json = await this.helper.createChapterRequestObject($, page, this)
-            page_data = this.parser.parseChapter(this.cheerio.load(json.effects.html), mangaId, this)
+            const json = await this.helper.createChapterRequestObject(
+                $,
+                page,
+                this
+            )
+            page_data = this.parser.parseChapter(
+                this.cheerio.load(json.effects.html),
+                mangaId,
+                this
+            )
             chapters.push(...page_data)
             page += 1
         } while (page_data.length > 0)
@@ -112,7 +128,10 @@ export class ReaperScans implements SearchResultsProviding, MangaProviding, Chap
         return chapters
     }
 
-    async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
+    async getChapterDetails(
+        mangaId: string,
+        chapterId: string
+    ): Promise<ChapterDetails> {
         const request = App.createRequest({
             url: `${this.baseUrl}/comics/${mangaId}/chapters/${chapterId}`,
             method: 'GET',
@@ -121,9 +140,16 @@ export class ReaperScans implements SearchResultsProviding, MangaProviding, Chap
         const $ = this.cheerio.load(response.data)
         return this.parser.parseChapterDetails($, mangaId, chapterId)
     }
-    async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
+    async getSearchResults(
+        query: SearchRequest,
+        metadata: any
+    ): Promise<PagedResults> {
         const page = metadata?.page ?? 1
-        if (page == -1 || !query) return App.createPagedResults({ results: [], metadata: { page: -1 } })
+        if (page == -1 || !query)
+            return App.createPagedResults({
+                results: [],
+                metadata: { page: -1 },
+            })
         const request = App.createRequest({
             url: `${this.baseUrl}`,
             method: 'GET',
@@ -132,16 +158,25 @@ export class ReaperScans implements SearchResultsProviding, MangaProviding, Chap
         this.checkResponseError(response)
         const $ = this.cheerio.load(response.data)
         const json = await this.helper.createSearchRequestObject($, query, this)
-        const result = this.parser.parseSearchResults(this.cheerio.load(json.effects.html))
+        const result = this.parser.parseSearchResults(
+            this.cheerio.load(json.effects.html)
+        )
         return App.createPagedResults({
             results: result,
             metadata: { page: -1 },
         })
     }
-    
-    async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
+
+    async getViewMoreItems(
+        homepageSectionId: string,
+        metadata: any
+    ): Promise<PagedResults> {
         let page = metadata?.page ?? 1
-        if (page == -1) return App.createPagedResults({ results: [], metadata: { page: -1 } })
+        if (page == -1)
+            return App.createPagedResults({
+                results: [],
+                metadata: { page: -1 },
+            })
         const request = App.createRequest({
             url: `${this.baseUrl}/latest/comics?page=${page.toString()}`,
             method: 'GET',
@@ -157,12 +192,21 @@ export class ReaperScans implements SearchResultsProviding, MangaProviding, Chap
             metadata: { page: page },
         })
     }
-    async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
+    async getHomePageSections(
+        sectionCallback: (section: HomeSection) => void
+    ): Promise<void> {
         const request = App.createRequest({
-            url: `${this.baseUrl}`,
+            url: this.baseUrl,
             method: 'GET',
+            headers: {
+                'user-agent': await this.requestManager.getDefaultUserAgent(),
+                referer: `${this.baseUrl}/`,
+            },
         })
+        console.log(`url is ${this.baseUrl}`)
         const response = await this.requestManager.schedule(request, this.RETRY)
+        console.log(`response is ${response.status}`)
+
         this.checkResponseError(response)
         const $ = this.cheerio.load(response.data)
         this.parser.parseHomeSections($, false, sectionCallback)
@@ -205,7 +249,7 @@ export class ReaperScans implements SearchResultsProviding, MangaProviding, Chap
             url: this.baseUrl,
             method: 'GET',
             headers: {
-                'user-agent':  await this.requestManager.getDefaultUserAgent(),
+                'user-agent': await this.requestManager.getDefaultUserAgent(),
                 referer: `${this.baseUrl}/`,
             },
         })
@@ -216,9 +260,30 @@ export class ReaperScans implements SearchResultsProviding, MangaProviding, Chap
         switch (status) {
             case 403:
             case 503:
-                throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to the homepage of <${this.baseUrl}> and press the cloud icon.`)
+                throw new Error(
+                    this.createErrorString(
+                        `Status: ${response.status}`,
+                        'Cloudflare Error: Click the CLOUD icon.',
+                        "If the issue persists, use #support in netsky's server."
+                    )
+                )
             case 404:
-                throw new Error(`The requested page ${response.request.url} was not found!`)
+                throw new Error(
+                    this.createErrorString(
+                        `Status: ${response.status}`,
+                        'Webpage not found and the website likely changed domains.',
+                        "Use #support in netsky's server."
+                    )
+                )
         }
+    }
+
+    createErrorString(...errors: string[]): string {
+        let ret = '\n<======>\n'
+        for (const err of errors) {
+            ret += `    • ${err}\n`
+        }
+        ret += '<======>\n'
+        return ret
     }
 }
