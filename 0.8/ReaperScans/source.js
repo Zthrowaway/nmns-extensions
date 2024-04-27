@@ -466,7 +466,7 @@ const parser_1 = require("./parser");
 const helper_1 = require("./helper");
 const REAPERSCANS_DOMAIN = 'https://reaperscans.com';
 exports.ReaperScansInfo = {
-    version: '4.0.0',
+    version: '4.0.1',
     name: 'ReaperScans',
     description: 'Reaperscans source for 0.8',
     author: 'NmN',
@@ -480,9 +480,10 @@ exports.ReaperScansInfo = {
             type: types_1.BadgeColor.GREY,
         },
     ],
-    intents: types_1.SourceIntents.MANGA_CHAPTERS | types_1.SourceIntents.HOMEPAGE_SECTIONS | types_1.SourceIntents.CLOUDFLARE_BYPASS_REQUIRED,
+    intents: types_1.SourceIntents.MANGA_CHAPTERS |
+        types_1.SourceIntents.HOMEPAGE_SECTIONS |
+        types_1.SourceIntents.CLOUDFLARE_BYPASS_REQUIRED,
 };
-const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1';
 class ReaperScans {
     constructor(cheerio) {
         this.cheerio = cheerio;
@@ -499,7 +500,7 @@ class ReaperScans {
                     request.headers = {
                         ...(request.headers ?? {}),
                         ...{
-                            'user-agent': userAgent,
+                            'user-agent': await this.requestManager.getDefaultUserAgent(),
                             referer: `${this.baseUrl}`,
                         },
                     };
@@ -556,7 +557,10 @@ class ReaperScans {
     async getSearchResults(query, metadata) {
         const page = metadata?.page ?? 1;
         if (page == -1 || !query)
-            return App.createPagedResults({ results: [], metadata: { page: -1 } });
+            return App.createPagedResults({
+                results: [],
+                metadata: { page: -1 },
+            });
         const request = App.createRequest({
             url: `${this.baseUrl}`,
             method: 'GET',
@@ -574,7 +578,10 @@ class ReaperScans {
     async getViewMoreItems(homepageSectionId, metadata) {
         let page = metadata?.page ?? 1;
         if (page == -1)
-            return App.createPagedResults({ results: [], metadata: { page: -1 } });
+            return App.createPagedResults({
+                results: [],
+                metadata: { page: -1 },
+            });
         const request = App.createRequest({
             url: `${this.baseUrl}/latest/comics?page=${page.toString()}`,
             method: 'GET',
@@ -594,10 +601,16 @@ class ReaperScans {
     }
     async getHomePageSections(sectionCallback) {
         const request = App.createRequest({
-            url: `${this.baseUrl}`,
+            url: this.baseUrl,
             method: 'GET',
+            headers: {
+                'user-agent': await this.requestManager.getDefaultUserAgent(),
+                referer: `${this.baseUrl}/`,
+            },
         });
+        console.log(`url is ${this.baseUrl}`);
         const response = await this.requestManager.schedule(request, this.RETRY);
+        console.log(`response is ${response.status}`);
         this.checkResponseError(response);
         const $ = this.cheerio.load(response.data);
         this.parser.parseHomeSections($, false, sectionCallback);
@@ -657,10 +670,18 @@ class ReaperScans {
         switch (status) {
             case 403:
             case 503:
-                throw new Error(`CLOUDFLARE BYPASS ERROR:\nPlease go to the homepage of <${this.baseUrl}> and press the cloud icon.`);
+                throw new Error(this.createErrorString(`Status: ${response.status}`, 'Cloudflare Error: Click the CLOUD icon.', "If the issue persists, use #support in netsky's server."));
             case 404:
-                throw new Error(`The requested page ${response.request.url} was not found!`);
+                throw new Error(this.createErrorString(`Status: ${response.status}`, 'Webpage not found and the website likely changed domains.', "Use #support in netsky's server."));
         }
+    }
+    createErrorString(...errors) {
+        let ret = '\n<======>\n';
+        for (const err of errors) {
+            ret += `    • ${err}\n`;
+        }
+        ret += '<======>\n';
+        return ret;
     }
 }
 exports.ReaperScans = ReaperScans;
