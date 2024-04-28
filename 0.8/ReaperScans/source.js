@@ -466,7 +466,7 @@ const parser_1 = require("./parser");
 const helper_1 = require("./helper");
 const REAPERSCANS_DOMAIN = 'https://reaperscans.com';
 exports.ReaperScansInfo = {
-    version: '4.0.2',
+    version: '4.0.3',
     name: 'ReaperScans',
     description: 'Reaperscans source for 0.8',
     author: 'NmN',
@@ -501,7 +501,7 @@ class ReaperScans {
                         ...(request.headers ?? {}),
                         ...{
                             'user-agent': await this.requestManager.getDefaultUserAgent(),
-                            referer: `${this.baseUrl}/`,
+                            referer: `${this.baseUrl}`,
                         },
                     };
                     return request;
@@ -659,6 +659,10 @@ class ReaperScans {
         return App.createRequest({
             url: this.baseUrl,
             method: 'GET',
+            headers: {
+                'user-agent': await this.requestManager.getDefaultUserAgent(),
+                referer: `${this.baseUrl}/`,
+            },
         });
     }
     checkResponseError(response) {
