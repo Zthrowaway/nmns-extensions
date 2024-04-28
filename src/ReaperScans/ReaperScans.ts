@@ -43,8 +43,7 @@ export const ReaperScansInfo: SourceInfo = {
         SourceIntents.CLOUDFLARE_BYPASS_REQUIRED,
 }
 
-export class ReaperScans
-    implements
+export class ReaperScans implements
         SearchResultsProviding,
         MangaProviding,
         ChapterProviding,
@@ -67,7 +66,7 @@ export class ReaperScans
                     ...{
                         'user-agent':
                             await this.requestManager.getDefaultUserAgent(),
-                        referer: `${this.baseUrl}`,
+                        referer: `${this.baseUrl}/`,
                     },
                 }
                 return request
@@ -248,10 +247,6 @@ export class ReaperScans
         return App.createRequest({
             url: this.baseUrl,
             method: 'GET',
-            headers: {
-                'user-agent': await this.requestManager.getDefaultUserAgent(),
-                referer: `${this.baseUrl}/`,
-            },
         })
     }
 
@@ -264,7 +259,7 @@ export class ReaperScans
                     this.createErrorString(
                         `Status: ${response.status}`,
                         'Cloudflare Error: Click the CLOUD icon.',
-                        "If the issue persists, use #support in netsky's server."
+                        'If the issue persists, use #support in netsky\'s server.'
                     )
                 )
             case 404:
@@ -272,7 +267,7 @@ export class ReaperScans
                     this.createErrorString(
                         `Status: ${response.status}`,
                         'Webpage not found and the website likely changed domains.',
-                        "Use #support in netsky's server."
+                        'Use #support in netsky\'s server.'
                     )
                 )
         }
