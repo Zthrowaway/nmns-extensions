@@ -501,7 +501,7 @@ class ReaperScans {
                         ...(request.headers ?? {}),
                         ...{
                             'user-agent': await this.requestManager.getDefaultUserAgent(),
-                            referer: `${this.baseUrl}`,
+                            referer: `${this.baseUrl}/`,
                         },
                     };
                     return request;
@@ -659,10 +659,6 @@ class ReaperScans {
         return App.createRequest({
             url: this.baseUrl,
             method: 'GET',
-            headers: {
-                'user-agent': await this.requestManager.getDefaultUserAgent(),
-                referer: `${this.baseUrl}/`,
-            },
         });
     }
     checkResponseError(response) {
@@ -670,9 +666,9 @@ class ReaperScans {
         switch (status) {
             case 403:
             case 503:
-                throw new Error(this.createErrorString(`Status: ${response.status}`, 'Cloudflare Error: Click the CLOUD icon.', "If the issue persists, use #support in netsky's server."));
+                throw new Error(this.createErrorString(`Status: ${response.status}`, 'Cloudflare Error: Click the CLOUD icon.', 'If the issue persists, use #support in netsky\'s server.'));
             case 404:
-                throw new Error(this.createErrorString(`Status: ${response.status}`, 'Webpage not found and the website likely changed domains.', "Use #support in netsky's server."));
+                throw new Error(this.createErrorString(`Status: ${response.status}`, 'Webpage not found and the website likely changed domains.', 'Use #support in netsky\'s server.'));
         }
     }
     createErrorString(...errors) {
