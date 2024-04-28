@@ -466,7 +466,7 @@ const parser_1 = require("./parser");
 const helper_1 = require("./helper");
 const REAPERSCANS_DOMAIN = 'https://reaperscans.com';
 exports.ReaperScansInfo = {
-    version: '4.0.1',
+    version: '4.0.2',
     name: 'ReaperScans',
     description: 'Reaperscans source for 0.8',
     author: 'NmN',
