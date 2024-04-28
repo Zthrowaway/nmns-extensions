@@ -23,7 +23,7 @@ import { Helper } from './helper'
 
 const REAPERSCANS_DOMAIN = 'https://reaperscans.com'
 export const ReaperScansInfo: SourceInfo = {
-    version: '4.0.2',
+    version: '4.0.3',
     name: 'ReaperScans',
     description: 'Reaperscans source for 0.8',
     author: 'NmN',
@@ -43,7 +43,8 @@ export const ReaperScansInfo: SourceInfo = {
         SourceIntents.CLOUDFLARE_BYPASS_REQUIRED,
 }
 
-export class ReaperScans implements
+export class ReaperScans
+    implements
         SearchResultsProviding,
         MangaProviding,
         ChapterProviding,
@@ -66,7 +67,7 @@ export class ReaperScans implements
                     ...{
                         'user-agent':
                             await this.requestManager.getDefaultUserAgent(),
-                        referer: `${this.baseUrl}/`,
+                        referer: `${this.baseUrl}`,
                     },
                 }
                 return request
@@ -247,6 +248,10 @@ export class ReaperScans implements
         return App.createRequest({
             url: this.baseUrl,
             method: 'GET',
+            headers: {
+                'user-agent': await this.requestManager.getDefaultUserAgent(),
+                referer: `${this.baseUrl}/`,
+            },
         })
     }
 
