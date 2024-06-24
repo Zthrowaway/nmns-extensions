@@ -21,17 +21,17 @@ import {
 
 import { Parser } from './parser'
 
-const ZEROSCANS_DOMAIN = 'https://zscans.com'
+const MANHUASCAN_DOMAIN = 'https://kaliscan.io/'
 
-export const ZeroScansInfo: SourceInfo = {
+export const ManhuaScanInfo: SourceInfo = {
     version: '2.0.1',
     name: 'Zero Scans',
     icon: 'icon.png',
     author: 'NmN',
-    authorWebsite: 'http://github.com/pandeynmm',
-    description: 'Extension that pulls manga from bato.to',
+    authorWebsite: 'http://github.com/Zthrowaway',
+    description: 'Extension that pulls manga from kaliscan.io,the new domain of Manhuascan',
     contentRating: ContentRating.EVERYONE,
-    websiteBaseURL: ZEROSCANS_DOMAIN,
+    websiteBaseURL: MANHUASCAN_DOMAIN,
     language: 'en',
     sourceTags: [ 
         {
@@ -45,8 +45,8 @@ export const ZeroScansInfo: SourceInfo = {
 
 const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1'
 
-export class ZeroScans implements SearchResultsProviding, MangaProviding, ChapterProviding, HomePageSectionsProviding {
-    baseUrl = ZEROSCANS_DOMAIN
+export class ManhuaScan implements SearchResultsProviding, MangaProviding, ChapterProviding, HomePageSectionsProviding {
+    baseUrl = MANHUASCAN_DOMAIN
     requestManager = App.createRequestManager({
         requestsPerSecond: 3,
         requestTimeout: 8000,
