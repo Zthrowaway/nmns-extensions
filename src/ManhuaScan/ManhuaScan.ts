@@ -27,7 +27,7 @@ export const ManhuaScanInfo: SourceInfo = {
     version: '2.0.1',
     name: 'Zero Scans',
     icon: 'icon.png',
-    author: 'NmN',
+    author: 'Zili',
     authorWebsite: 'http://github.com/Zthrowaway',
     description: 'Extension that pulls manga from kaliscan.io,the new domain of Manhuascan',
     contentRating: ContentRating.EVERYONE,
