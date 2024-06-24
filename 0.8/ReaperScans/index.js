@@ -460,20 +460,20 @@ __exportStar(require("./compat/DyamicUI"), exports);
 },{"./base/index":7,"./compat/DyamicUI":16,"./generated/_exports":60}],62:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReaperScans = exports.ReaperScansInfo = void 0;
+exports.MyReadingManga = exports.MyReadingMangaInfo = void 0;
 const types_1 = require("@paperback/types");
 const parser_1 = require("./parser");
 const helper_1 = require("./helper");
-const REAPERSCANS_DOMAIN = 'https://reaperscans.com';
-exports.ReaperScansInfo = {
+const MYREADINGMANGA_DOMAIN = 'https://myreadingmanga.info';
+exports.MyReadingMangaInfo = {
     version: '4.0.3',
-    name: 'ReaperScans',
-    description: 'Reaperscans source for 0.8',
-    author: 'NmN',
-    authorWebsite: 'http://github.com/pandeynmm',
+    name: 'MyReadingManga',
+    description: 'MRM source for 0.8',
+    author: 'Zili',
+    authorWebsite: 'http://github.com/Zthrowaway',
     icon: 'icon.png',
-    contentRating: types_1.ContentRating.EVERYONE,
-    websiteBaseURL: REAPERSCANS_DOMAIN,
+    contentRating: types_1.ContentRating.ADULT,
+    websiteBaseURL: MYREADINGMANGA_DOMAIN,
     sourceTags: [
         {
             text: 'English',
@@ -484,10 +484,10 @@ exports.ReaperScansInfo = {
         types_1.SourceIntents.HOMEPAGE_SECTIONS |
         types_1.SourceIntents.CLOUDFLARE_BYPASS_REQUIRED,
 };
-class ReaperScans {
+class MyReadingManga {
     constructor(cheerio) {
         this.cheerio = cheerio;
-        this.baseUrl = REAPERSCANS_DOMAIN;
+        this.baseUrl = MYREADINGMANGA_DOMAIN;
         this.stateManager = App.createSourceStateManager();
         this.RETRY = 5;
         this.parser = new parser_1.Parser();
@@ -684,7 +684,7 @@ class ReaperScans {
         return ret;
     }
 }
-exports.ReaperScans = ReaperScans;
+exports.MyReadingManga = MyReadingManga;
 
 },{"./helper":63,"./parser":64,"@paperback/types":61}],63:[function(require,module,exports){
 "use strict";
@@ -721,7 +721,7 @@ class Helper {
         source.checkResponseError(response);
         const json = JSON.parse(response.data);
         if (!json?.effects?.html) {
-            throw new Error('\n(ReaperScans) -> Chapter request returned no data. Contact support.\n');
+            throw new Error('\n(MyReadingManga) -> Chapter request returned no data. Contact support.\n');
         }
         return json;
     }
@@ -755,7 +755,7 @@ class Helper {
         source.checkResponseError(response);
         const json = JSON.parse(response.data);
         if (!json?.effects?.html) {
-            throw new Error('\n(ReaperScans) -> Search request returned no data. Contact support.\n');
+            throw new Error('\n(MyReadingManga) -> Search request returned no data. Contact support.\n');
         }
         return json;
     }
