@@ -460,19 +460,19 @@ __exportStar(require("./compat/DyamicUI"), exports);
 },{"./base/index":7,"./compat/DyamicUI":16,"./generated/_exports":60}],62:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZeroScans = exports.ZeroScansInfo = void 0;
+exports.ManhuaScan = exports.ManhuaScanInfo = void 0;
 const types_1 = require("@paperback/types");
 const parser_1 = require("./parser");
-const ZEROSCANS_DOMAIN = 'https://zscans.com';
-exports.ZeroScansInfo = {
+const MANHUASCAN_DOMAIN = 'https://kaliscan.io';
+exports.ManhuaScanInfo = {
     version: '2.0.1',
-    name: 'Zero Scans',
+    name: 'Manhua Scan',
     icon: 'icon.png',
-    author: 'NmN',
-    authorWebsite: 'http://github.com/pandeynmm',
-    description: 'Extension that pulls manga from bato.to',
+    author: 'Zili',
+    authorWebsite: 'http://github.com/Zthrowaway',
+    description: 'Extension that pulls manga from kaliscan.io,the new domain of Manhuascan',
     contentRating: types_1.ContentRating.EVERYONE,
-    websiteBaseURL: ZEROSCANS_DOMAIN,
+    websiteBaseURL: MANHUASCAN_DOMAIN,
     language: 'en',
     sourceTags: [
         {
@@ -483,10 +483,10 @@ exports.ZeroScansInfo = {
     intents: types_1.SourceIntents.MANGA_CHAPTERS | types_1.SourceIntents.HOMEPAGE_SECTIONS | types_1.SourceIntents.CLOUDFLARE_BYPASS_REQUIRED
 };
 const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1';
-class ZeroScans {
+class ManhuaScan {
     constructor(cheerio) {
         this.cheerio = cheerio;
-        this.baseUrl = ZEROSCANS_DOMAIN;
+        this.baseUrl = MANHUASCAN_DOMAIN;
         this.requestManager = App.createRequestManager({
             requestsPerSecond: 3,
             requestTimeout: 8000,
@@ -535,7 +535,7 @@ class ZeroScans {
         const start_index = id_html.indexOf('data:[{details:{id:');
         let numericId = id_html.substring(start_index + 19, id_html.indexOf(',name:'));
         if (numericId == 'e') {
-            const start_index = id_html.indexOf(',false,"Zero Scans"));') - 5;
+            const start_index = id_html.indexOf(',false,"Manhua Scan"));') - 5;
             numericId = id_html.substring(start_index);
             numericId = numericId.substring(numericId.indexOf(',') + 1);
             numericId = numericId.substring(0, numericId.indexOf(','));
@@ -690,7 +690,7 @@ class ZeroScans {
         }
     }
 }
-exports.ZeroScans = ZeroScans;
+exports.ManhuaScan = ManhuaScan;
 
 },{"./parser":63,"@paperback/types":61}],63:[function(require,module,exports){
 "use strict";
