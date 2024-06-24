@@ -21,19 +21,19 @@ import {
 import { Parser } from './parser'
 import { Helper } from './helper'
 
-const REAPERSCANS_DOMAIN = 'https://reaperscans.com'
-export const ReaperScansInfo: SourceInfo = {
+const MYREADINGMANGA_DOMAIN = 'https://myreadingmanga.info'
+export const MyReadingMangaInfo: SourceInfo = {
     version: '4.0.3',
-    name: 'ReaperScans',
-    description: 'Reaperscans source for 0.8',
-    author: 'NmN',
-    authorWebsite: 'http://github.com/pandeynmm',
+    name: 'MyReadingManga',
+    description: 'MyReadingManga source for 0.8',
+    author: 'Zili',
+    authorWebsite: 'http://github.com/z-s-extensions',
     icon: 'icon.png',
-    contentRating: ContentRating.EVERYONE,
-    websiteBaseURL: REAPERSCANS_DOMAIN,
+    contentRating: ContentRating.ADULT,
+    websiteBaseURL: MYREADINGMANGA_DOMAIN,
     sourceTags: [
         {
-            text: 'English',
+            text: 'English' 'Japanese' 'Korean' 'Spanish' 'Chinese' 'Portugese' 'Thai' 'French' 'Vietnamese' 'Bahasa Indonesia' 'Russian' 'Traditional Chinese' 'Italian' 'German',
             type: BadgeColor.GREY,
         },
     ],
@@ -43,14 +43,14 @@ export const ReaperScansInfo: SourceInfo = {
         SourceIntents.CLOUDFLARE_BYPASS_REQUIRED,
 }
 
-export class ReaperScans
+export class MyReadingManga
     implements
         SearchResultsProviding,
         MangaProviding,
         ChapterProviding,
         HomePageSectionsProviding
 {
-    baseUrl = REAPERSCANS_DOMAIN
+    baseUrl = MYREADINGMANGA_DOMAIN
     stateManager: SourceStateManager = App.createSourceStateManager()
     constructor(private cheerio: CheerioAPI) {}
     RETRY = 5
